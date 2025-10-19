@@ -8,7 +8,7 @@ namespace Nitrox_PublixExtension.Core.ReflectionWrappers
     {
         //MethodInfo getPlayerMethod = null;
 
-        NitroxServer.GameLogic.PlayerManager internalPlayerManager;
+        public NitroxServer.GameLogic.PlayerManager internalPlayerManager;
         public PlayerManager(NitroxServer.Communication.NitroxServer NitroxRawServer) 
         {
             internalPlayerManager = ((NitroxServer.GameLogic.PlayerManager)NitroxRawServer.GetType().GetField("playerManager", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(NitroxRawServer));

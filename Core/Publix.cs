@@ -3,6 +3,7 @@ using Nitrox_PublixExtension.Core.Commands;
 using Nitrox_PublixExtension.Core.Events;
 using Nitrox_PublixExtension.Core.Plugin;
 using NitroxModel.Logger;
+using NitroxServer;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension.Core
@@ -28,13 +29,12 @@ namespace Nitrox_PublixExtension.Core
             //TODO: revamp this
             Program.serializedPluginMessager += (msg) => 
             {
-                Log.Info($"Got Message: {msg}");
                 if (msg == null)
                     return;
 
-                if (msg == "Server Started")
+                if (msg == "1") //server started
                 {
-                    var NitroxServerInstance = Entry.ServerAssembly.GetType("NitroxServer.Server").GetProperty("Instance").GetGetMethod().Invoke(null, null);
+                    Server NitroxServerInstance = ((Server)Entry.ServerAssembly.GetType("NitroxServer.Server").GetProperty("Instance").GetGetMethod().Invoke(null, null));
 
                     RepeatingTask.RunInBackground(async () =>
                     {
@@ -42,15 +42,21 @@ namespace Nitrox_PublixExtension.Core
 
                         if (NitroxRawServer != null)
                         {
+
                             playerManager = new ReflectionWrappers.PlayerManager(NitroxRawServer);
 
-                            NitroxRawServer.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet); };
+                            Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
+                            Server.OnPacketSent = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Sent); };
 
                             return false;
                         }
 
                         return true;
                     }, 100); //every 100 ms
+                }
+                else if (msg == "0") //server shutdown
+                {
+                    pluginManager.OnServerShutdown();
                 }
             }; 
 

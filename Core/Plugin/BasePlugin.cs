@@ -1,8 +1,11 @@
-﻿namespace Nitrox_PublixExtension.Core.Plugin
+﻿using Nitrox_PublixExtension.Core.Plugin.Config;
+
+namespace Nitrox_PublixExtension.Core.Plugin
 {
     public class BasePlugin
     {
         private PluginLogger _logger;
+        private ConfigManager _configManager;
 
         public virtual void OnEnable() { }
         public virtual void OnDisable() { }
@@ -14,6 +17,16 @@
             }
 
             return _logger;
+        }
+
+        public ConfigManager GetConfigManager()
+        {
+            if (_configManager == null)
+            {
+                _configManager = new ConfigManager(this);
+            }
+
+            return _configManager;
         }
 
     }

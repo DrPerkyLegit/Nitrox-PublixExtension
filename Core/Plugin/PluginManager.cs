@@ -32,6 +32,15 @@ namespace Nitrox_PublixExtension.Core.Plugin
             return commands.AsEnumerable();
         }
 
+        //INTERNAL USE ONLY / NOT FOR PLUGIN USE
+        public void OnServerShutdown()
+        {
+            foreach (var item in pluginDict)
+            {
+                item.Value.OnDisable();
+            }
+        }
+
         protected void RegisterPluginCommands()
         {
             Type CommandType = typeof(Command);

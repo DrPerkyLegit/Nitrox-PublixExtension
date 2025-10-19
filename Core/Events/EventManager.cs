@@ -1,6 +1,7 @@
 ﻿using Nitrox_PublixExtension.Core.Events.Attributes;
 using Nitrox_PublixExtension.Core.Events.Base;
 using Nitrox_PublixExtension.Core.Plugin;
+using NitroxModel.Logger;
 using NitroxModel.Packets;
 using NitroxServer;
 using NitroxServer.Communication;
@@ -83,8 +84,14 @@ namespace Nitrox_PublixExtension.Core.Events
 
         }
 
+        public enum PacketType
+        {
+            Sent,
+            Recieved,
+        }
+
         //INTERNAL USE ONLY / NOT FOR PLUGIN USE, Calls PacketEvent Listeners To Handle This Packet, Doesnt Send It To Server
-        public bool OnPacketCallback(INitroxConnection connection, Packet packet)
+        public bool OnPacketCallback(INitroxConnection connection, Packet packet, PacketType type)
         {
             Type packetType = packet.GetType();
             Event asscociatedEvent = new Event(); //decide if packet can be canceled and create a cancelable event if we can
@@ -97,7 +104,13 @@ namespace Nitrox_PublixExtension.Core.Events
                 {
                     foreach (var methodPair in listenerPair.Value)
                     {
-                        if (methodPair.Value.type == ListenerType.PacketEvent)
+                        if (methodPair.Value.type == ListenerType.PacketEvent && type == PacketType.Recieved)
+                        {
+                            if (methodPair.Key.GetParameters()[2].ParameterType == packetType)
+                            {
+                                methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, connection, packet });
+                            }
+                        } else if (methodPair.Value.type == ListenerType.ServerEvent && type == PacketType.Sent) //open to refractoring
                         {
                             if (methodPair.Key.GetParameters()[2].ParameterType == packetType)
                             {
@@ -115,15 +128,20 @@ namespace Nitrox_PublixExtension.Core.Events
                 shouldContinue = !asscociatedEvent.isCancelled;
             }
 
-            if (shouldContinue && packetType == typeof(ServerCommand))
+            if (type == PacketType.Recieved)
             {
-                ServerCommand commandPacket = ((ServerCommand)packet);
-                Player commandSender = Publix.getPlayerManager().GetPlayerByConnection(connection);
+                if (shouldContinue && packetType == typeof(ServerCommand))
+                {
+                    ServerCommand commandPacket = ((ServerCommand)packet);
+                    Player commandSender = Publix.getPlayerManager().GetPlayerByConnection(connection);
 
-                shouldContinue = !Publix.playerCommandProcessor.ProcessCommand(commandPacket.Cmd, commandSender, commandSender.Permissions);
+                    shouldContinue = !Publix.playerCommandProcessor.ProcessCommand(commandPacket.Cmd, commandSender, commandSender.Permissions);
+                }
             }
 
-            return shouldContinue;
+
+
+                return shouldContinue;
         }
     }
 }
