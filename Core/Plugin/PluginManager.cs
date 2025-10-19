@@ -77,6 +77,11 @@ namespace Nitrox_PublixExtension.Core.Plugin
                                 continue;
                             }
 
+                            if (infoAttribute.publixVersion != Entry._version)
+                            {
+                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Only Supports Publix \"{infoAttribute.publixVersion}\" And Current Is \"{Entry._version}\", Continuing But Expect Errors Or Crashes");
+                            }
+
                             BasePlugin PluginInstance = (BasePlugin)Activator.CreateInstance(type);
                             pluginDict.Add(infoAttribute, PluginInstance);
 

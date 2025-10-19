@@ -5,7 +5,7 @@
 Rewrite messaging system for stuff like server started
 Add callback for server -> player packets
 Add config system like paper / spigot
-Change plugin attribute to add version of publix build against
+--Change plugin attribute to add version of publix build against-- ADDED 10/19/25 (should refractor to version it was compiled against instead of user defined)
 
 
 Plugins to create:

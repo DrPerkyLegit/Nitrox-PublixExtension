@@ -5,8 +5,8 @@ namespace Nitrox_PublixExtension
 {
     internal class Entry
     {
-        protected static string _version = "0.0.0.1"; //Publix version
-        protected static string _supported = "1.8.0.0"; //Supported Nitrox version
+        public static readonly string _version = "0.0.0.2"; //Publix version
+        public static readonly string _supported = "1.8.0.0"; //Supported Nitrox version
 
         public static Assembly ServerAssembly = null;
 
