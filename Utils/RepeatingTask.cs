@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-public class RepeatingTask
+﻿public class RepeatingTask
 {
     public static async Task StartAsync(Func<Task<bool>> action, int delayMs, CancellationToken token = default)
     {

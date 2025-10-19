@@ -1,8 +1,5 @@
-﻿using NitroxModel.Helper;
-using NitroxModel;
-using NitroxModel.Logger;
+﻿using NitroxModel.Logger;
 using System.Reflection;
-using Nitrox_PublixExtension.Core;
 
 namespace Nitrox_PublixExtension
 {

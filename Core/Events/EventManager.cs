@@ -1,17 +1,10 @@
 ﻿using Nitrox_PublixExtension.Core.Events.Attributes;
 using Nitrox_PublixExtension.Core.Events.Base;
 using Nitrox_PublixExtension.Core.Plugin;
-using NitroxModel.Logger;
 using NitroxModel.Packets;
 using NitroxServer;
 using NitroxServer.Communication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nitrox_PublixExtension.Core.Events
 {

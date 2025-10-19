@@ -3,12 +3,6 @@ using NitroxModel.DataStructures.GameLogic;
 using NitroxModel.Logger;
 using NitroxServer.ConsoleCommands.Abstract.Type;
 using NitroxServer.ConsoleCommands.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static NitroxServer.ConsoleCommands.Abstract.Command;
 
 namespace Nitrox_PublixExtension.Core.Commands
 {

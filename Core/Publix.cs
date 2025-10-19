@@ -1,21 +1,9 @@
-﻿using HarmonyLib;
-using Nitrox.Server.Subnautica;
+﻿using Nitrox.Server.Subnautica;
 using Nitrox_PublixExtension.Core.Commands;
 using Nitrox_PublixExtension.Core.Events;
 using Nitrox_PublixExtension.Core.Plugin;
-using Nitrox_PublixExtension.Core.ReflectionWrappers;
 using NitroxModel.Logger;
-using NitroxModel.Packets;
-using NitroxServer;
-using NitroxServer.Communication;
-using NitroxServer.ConsoleCommands.Processor;
-using NitroxServer.GameLogic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nitrox_PublixExtension.Core
 {
