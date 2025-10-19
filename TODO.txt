@@ -1,0 +1,23 @@
+﻿Publix TODO:
+
+Make Commands Work
+Replace help command to include commands added by plugins
+Rewrite messaging system for stuff like server started
+Add callback for server -> player packets
+Add config system like paper / spigot
+Change plugin attribute to add version of publix build against
+
+
+Plugins to create:
+
+Discord Relay Plugin: relay chat to discord, 2 way talking, player join and leave messages
+SecureAccounts: Usernames are a one time per player, /register and /login command
+Clear Lag: auto clear dropped items every so often or just make them despawn eventually
+Better Moderation: name says it all, auto moderation of some features, ip-ban
+Anticheat: prevent stats editing etc
+PartyContainment: party system, beating the game is for a party or blocked so it doesnt wipe map, should go side by side with anti-grief
+Anti-WorldBreak: prevents save issues from level 100 or any bug of the sort
+Anti-Grief: Prevents People From Griefing Others Builds / Vehicles, logs when they try
+Toggle-PVP: per player toggleable pvp, if someone has it enabled they cant take damage or pvp
+Anti-Vehicle-Stuck: adds command to respawn vehicle (moves position), logs when someone does it, 1 hour cooldown
+Death-Marker: using a fake beacon maybe for death marker
