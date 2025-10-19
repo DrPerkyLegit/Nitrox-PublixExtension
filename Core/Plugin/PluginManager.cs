@@ -2,6 +2,7 @@
 using NitroxModel.Logger;
 using NitroxServer.ConsoleCommands.Abstract;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Nitrox_PublixExtension.Core.Plugin
 {
@@ -59,6 +60,8 @@ namespace Nitrox_PublixExtension.Core.Plugin
 
             Type BasePluginType = typeof(BasePlugin);
 
+            Span<string> publixVersionSplit = Entry._version.Split(".", StringSplitOptions.RemoveEmptyEntries);
+
             foreach (var dll in Directory.GetFiles(PluginsDir, "*.dll"))
             {
                 try
@@ -77,10 +80,32 @@ namespace Nitrox_PublixExtension.Core.Plugin
                                 continue;
                             }
 
-                            if (infoAttribute.publixVersion != Entry._version)
+                            if (!infoAttribute.publixVersion.Contains("."))
                             {
-                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Only Supports Publix \"{infoAttribute.publixVersion}\" And Current Is \"{Entry._version}\", Continuing But Expect Errors Or Crashes");
+                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Had Invalid Version Format, Must Be Like \"{Entry._version}\" Not \"{infoAttribute.publixVersion}\"");
+                                continue;
                             }
+
+                            Span<string> pluginVersionSplit = infoAttribute.publixVersion.Split(".", StringSplitOptions.RemoveEmptyEntries);
+
+                            if (pluginVersionSplit.Length != 3)
+                            {
+                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Had Invalid Version Format, Must Be Like \"1.0.0\" Not \"{infoAttribute.publixVersion}\"");
+                                continue;
+                            }
+
+                            if (pluginVersionSplit[0] != publixVersionSplit[0])
+                            {
+                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Uses Incorrect Major Version \"{pluginVersionSplit[0]}\"");
+                                continue;
+                            }
+
+                            if (pluginVersionSplit[1] != publixVersionSplit[1])
+                            {
+                                Log.Error($"Tried To Load Plugin At \"{dll}\" But It Uses Incorrect Minor Version \"{pluginVersionSplit[1]}\", Continuing But Expect Issues");
+                            }
+
+                            //add better version checking, this is just basic for now
 
                             BasePlugin PluginInstance = (BasePlugin)Activator.CreateInstance(type);
                             pluginDict.Add(infoAttribute, PluginInstance);
