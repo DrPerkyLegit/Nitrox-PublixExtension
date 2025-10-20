@@ -3,8 +3,10 @@
     public enum ListenerType
     {
         None,
-        PacketEvent,
-        ServerEvent,
+        PacketRecieved,
+        PacketSent,
+        PacketSentAll,
+        PacketSentOthers,
         PluginEvent
     }
     public class ListenerMethodAttribute : Attribute

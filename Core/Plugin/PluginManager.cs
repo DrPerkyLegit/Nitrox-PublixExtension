@@ -37,7 +37,18 @@ namespace Nitrox_PublixExtension.Core.Plugin
         {
             foreach (var item in pluginDict)
             {
+                Log.Info($"Disabled Plugin: {item.Key.name}");
                 item.Value.OnDisable();
+            }
+        }
+
+        //INTERNAL USE ONLY / NOT FOR PLUGIN USE
+        public void OnServerStarted()
+        {
+            foreach (var item in pluginDict)
+            {
+                Log.Info($"Enabled Plugin: {item.Key.name} V{item.Key.version}");
+                item.Value.OnEnable();
             }
         }
 
@@ -119,7 +130,8 @@ namespace Nitrox_PublixExtension.Core.Plugin
                             BasePlugin PluginInstance = (BasePlugin)Activator.CreateInstance(type);
                             pluginDict.Add(infoAttribute, PluginInstance);
 
-                            PluginInstance.OnEnable();
+                            Log.Info($"Loading Plugin: {infoAttribute.name} V{infoAttribute.version}");
+                            PluginInstance.OnLoad();
                         }
                     }
                 }

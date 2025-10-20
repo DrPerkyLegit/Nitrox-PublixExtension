@@ -3,7 +3,9 @@ using Nitrox_PublixExtension.Core.Commands;
 using Nitrox_PublixExtension.Core.Events;
 using Nitrox_PublixExtension.Core.Plugin;
 using NitroxModel.Logger;
+using NitroxModel.Serialization;
 using NitroxServer;
+using NitroxServer.Communication;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension.Core
@@ -17,7 +19,10 @@ namespace Nitrox_PublixExtension.Core
 
         protected static ReflectionWrappers.PlayerManager playerManager = null;
 
+        public static Server NitroxServerInstance;
         public static NitroxServer.Communication.NitroxServer NitroxRawServer;
+
+        protected static FieldInfo serverConfigField;
 
         protected static void Init()
         {
@@ -27,14 +32,16 @@ namespace Nitrox_PublixExtension.Core
             playerCommandProcessor = new PlayerCommandProcessor(pluginManager.GetAllCommands().Append(new HelpCommandOverwrite()));
 
             //TODO: revamp this
-            Program.serializedPluginMessager += (msg) => 
+            Server.OnSystemMessage = (msg) => 
             {
                 if (msg == null)
                     return;
 
-                if (msg == "1") //server started
+                if (msg[0] == '1') //server started
                 {
-                    Server NitroxServerInstance = ((Server)Entry.ServerAssembly.GetType("NitroxServer.Server").GetProperty("Instance").GetGetMethod().Invoke(null, null));
+                    NitroxServerInstance = ((Server)Entry.ServerAssembly.GetType("NitroxServer.Server").GetProperty("Instance").GetGetMethod().Invoke(null, null));
+
+                    serverConfigField = NitroxServerInstance.GetType().GetField("serverConfig", BindingFlags.Instance | BindingFlags.NonPublic);
 
                     RepeatingTask.RunInBackground(async () =>
                     {
@@ -46,15 +53,18 @@ namespace Nitrox_PublixExtension.Core
                             playerManager = new ReflectionWrappers.PlayerManager(NitroxRawServer);
 
                             Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
-                            Server.OnPacketSent = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Sent); };
-
+                            Server.OnPacketSentToPlayer = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOne); };
+                            Server.OnPacketSentToOtherPlayers = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOthers); };
+                            Server.OnPacketSentToAllPlayers = (packet) => { return eventManager.OnPacketCallback(null, packet, EventManager.PacketType.SentAll); };
+                            
+                            pluginManager.OnServerStarted();
                             return false;
                         }
 
                         return true;
                     }, 100); //every 100 ms
                 }
-                else if (msg == "0") //server shutdown
+                else if (msg[0] == '0') //server shutdown
                 {
                     pluginManager.OnServerShutdown();
                 }
@@ -70,6 +80,11 @@ namespace Nitrox_PublixExtension.Core
         public static EventManager getEventManager()
         {
             return eventManager;
+        }
+
+        public static SubnauticaServerConfig GetSubnauticaServerConfig()
+        {
+            return (SubnauticaServerConfig)serverConfigField.GetValue(NitroxServerInstance);
         }
 
 

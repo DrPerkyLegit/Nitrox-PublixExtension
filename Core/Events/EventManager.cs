@@ -35,7 +35,7 @@ namespace Nitrox_PublixExtension.Core.Events
                 if (methodAttribute == null)
                     continue;
 
-                if (methodAttribute.type == ListenerType.PacketEvent)
+                if (methodAttribute.type == ListenerType.PacketRecieved)
                 {
                     if (method.ReturnParameter.ParameterType != typeof(void))
                     {
@@ -57,9 +57,9 @@ namespace Nitrox_PublixExtension.Core.Events
                         continue;
                     }
 
-                    if (parameterInfos[1].ParameterType != typeof(INitroxConnection))
+                    if (parameterInfos[1].ParameterType != typeof(INitroxConnection) && parameterInfos[1].ParameterType != typeof(Player))
                     {
-                        plugin.GetLogger().Error($"Error Registering ListenerMethod \"{method.Name}\" in EventListener \"{listener.GetType().ToString()}\": Invalid Parameter Type, Parameter 1 Must Be \"{typeof(INitroxConnection)}\" Not \"{parameterInfos[1].ParameterType.ToString()}\"");
+                        plugin.GetLogger().Error($"Error Registering ListenerMethod \"{method.Name}\" in EventListener \"{listener.GetType().ToString()}\": Invalid Parameter Type, Parameter 1 Must Be \"{typeof(INitroxConnection)}\" OR \"{typeof(Player)}\" Not \"{parameterInfos[1].ParameterType.ToString()}\"");
                         continue;
                     }
 
@@ -86,14 +86,19 @@ namespace Nitrox_PublixExtension.Core.Events
 
         public enum PacketType
         {
-            Sent,
+            SentOne,
+            SentAll,
+            SentOthers,
             Recieved,
+            Server
         }
 
         //INTERNAL USE ONLY / NOT FOR PLUGIN USE, Calls PacketEvent Listeners To Handle This Packet, Doesnt Send It To Server
-        public bool OnPacketCallback(INitroxConnection connection, Packet packet, PacketType type)
+        public bool OnPacketCallback(INitroxConnection? connection, Packet packet, PacketType type)
         {
             Type packetType = packet.GetType();
+            Type playerType = typeof(Player);
+            Type connectionType = typeof(INitroxConnection);
             Event asscociatedEvent = new Event(); //decide if packet can be canceled and create a cancelable event if we can
 
             //Log.Info($"Debug Packet Log: {packetType}");
@@ -104,17 +109,25 @@ namespace Nitrox_PublixExtension.Core.Events
                 {
                     foreach (var methodPair in listenerPair.Value)
                     {
-                        if (methodPair.Value.type == ListenerType.PacketEvent && type == PacketType.Recieved)
+                        if ((methodPair.Value.type == ListenerType.PacketRecieved && type == PacketType.Recieved) || (methodPair.Value.type == ListenerType.PacketSent && type == PacketType.SentOne) || (methodPair.Value.type == ListenerType.PacketSentOthers && type == PacketType.SentOthers)) //open to refractoring
                         {
                             if (methodPair.Key.GetParameters()[2].ParameterType == packetType)
                             {
-                                methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, connection, packet });
+                                if (methodPair.Key.GetParameters()[1].ParameterType == playerType)
+                                {
+                                    methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, Publix.getPlayerManager().GetPlayerByConnection(connection), packet });
+                                }
+                                else if (methodPair.Key.GetParameters()[1].ParameterType == connectionType)
+                                {
+                                    methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, connection, packet });
+                                }
                             }
-                        } else if (methodPair.Value.type == ListenerType.ServerEvent && type == PacketType.Sent) //open to refractoring
+                        }
+                        else if (methodPair.Value.type == ListenerType.PacketSentAll && type == PacketType.SentAll)
                         {
-                            if (methodPair.Key.GetParameters()[2].ParameterType == packetType)
+                            if (methodPair.Key.GetParameters()[1].ParameterType == packetType)
                             {
-                                methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, connection, packet });
+                                methodPair.Key.Invoke(listenerPair.Key, new object[] { asscociatedEvent, packet });
                             }
                         }
                     }
@@ -139,9 +152,7 @@ namespace Nitrox_PublixExtension.Core.Events
                 }
             }
 
-
-
-                return shouldContinue;
+            return shouldContinue;
         }
     }
 }

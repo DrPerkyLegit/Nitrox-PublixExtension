@@ -7,6 +7,7 @@ namespace Nitrox_PublixExtension.Core.Plugin
         private PluginLogger _logger;
         private ConfigManager _configManager;
 
+        public virtual void OnLoad() { }
         public virtual void OnEnable() { }
         public virtual void OnDisable() { }
         public PluginLogger GetLogger()
