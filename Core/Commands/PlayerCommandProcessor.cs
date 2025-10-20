@@ -1,8 +1,10 @@
-﻿using NitroxModel.DataStructures.GameLogic;
-using NitroxModel.DataStructures.Util;
-using NitroxModel.Logger;
-using NitroxServer.ConsoleCommands.Abstract;
-using NitroxServer;
+﻿
+
+using Nitrox.Model.DataStructures;
+using Nitrox.Model.DataStructures.GameLogic;
+using Nitrox.Model.Logger;
+using Nitrox.Server.Subnautica;
+using Nitrox.Server.Subnautica.Models.Commands.Abstract;
 
 namespace Nitrox_PublixExtension.Core.Commands
 {

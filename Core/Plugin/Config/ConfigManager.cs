@@ -1,6 +1,6 @@
-﻿using Nitrox_PublixExtension.Core.Plugin.Attributes;
+﻿using Nitrox.Model.Logger;
+using Nitrox_PublixExtension.Core.Plugin.Attributes;
 using Nitrox_PublixExtension.Core.Plugin.Config.Processors;
-using NitroxModel.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;

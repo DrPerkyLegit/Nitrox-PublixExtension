@@ -1,11 +1,12 @@
-﻿using Nitrox_PublixExtension.Core.Events.Attributes;
+﻿using Nitrox.Server.Subnautica.Models.Packets.Processors;
+using Nitrox_PublixExtension.Core.Events.Attributes;
 using Nitrox_PublixExtension.Core.Events.Base;
 using Nitrox_PublixExtension.Core.Plugin;
-using NitroxModel.Logger;
-using NitroxModel.Packets;
-using NitroxServer;
-using NitroxServer.Communication;
+using Nitrox.Model.Subnautica.Packets;
 using System.Reflection;
+using Nitrox.Server.Subnautica.Models.Communication;
+using Nitrox.Server.Subnautica;
+using Nitrox.Model.Packets;
 
 namespace Nitrox_PublixExtension.Core.Events
 {

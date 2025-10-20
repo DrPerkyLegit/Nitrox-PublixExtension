@@ -1,5 +1,5 @@
-﻿using Nitrox_PublixExtension.Core.Plugin.Attributes;
-using NitroxModel.Logger;
+﻿using Nitrox.Model.Logger;
+using Nitrox_PublixExtension.Core.Plugin.Attributes;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension.Core.Plugin

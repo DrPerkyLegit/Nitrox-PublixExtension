@@ -2,10 +2,10 @@
 using Nitrox_PublixExtension.Core.Commands;
 using Nitrox_PublixExtension.Core.Events;
 using Nitrox_PublixExtension.Core.Plugin;
-using NitroxModel.Logger;
-using NitroxModel.Serialization;
-using NitroxServer;
-using NitroxServer.Communication;
+using Nitrox.Model.Logger;
+using Nitrox.Model.Serialization;
+using Nitrox.Server.Subnautica;
+using Nitrox.Server.Subnautica.Models.Communication;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension.Core
@@ -20,7 +20,7 @@ namespace Nitrox_PublixExtension.Core
         protected static ReflectionWrappers.PlayerManager playerManager = null;
 
         public static Server NitroxServerInstance;
-        public static NitroxServer.Communication.NitroxServer NitroxRawServer;
+        public static NitroxServer NitroxRawServer;
 
         protected static FieldInfo serverConfigField;
 
@@ -39,20 +39,20 @@ namespace Nitrox_PublixExtension.Core
 
                 if (msg[0] == '1') //server started
                 {
-                    NitroxServerInstance = ((Server)Entry.ServerAssembly.GetType("NitroxServer.Server").GetProperty("Instance").GetGetMethod().Invoke(null, null));
+                    NitroxServerInstance = ((Server)typeof(Server).GetProperty("Instance").GetGetMethod().Invoke(null, null));
 
                     serverConfigField = NitroxServerInstance.GetType().GetField("serverConfig", BindingFlags.Instance | BindingFlags.NonPublic);
 
                     RepeatingTask.RunInBackground(async () =>
                     {
-                        NitroxRawServer = ((NitroxServer.Communication.NitroxServer)Entry.ServerAssembly.GetType("NitroxServer.Server")?.GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
+                        NitroxRawServer = ((NitroxServer)Entry.ServerAssembly.GetType("NitroxServer.Server")?.GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
 
                         if (NitroxRawServer != null)
                         {
 
                             playerManager = new ReflectionWrappers.PlayerManager(NitroxRawServer);
 
-                            Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
+                            Nitrox.Server.Subnautica.Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
                             Server.OnPacketSentToPlayer = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOne); };
                             Server.OnPacketSentToOtherPlayers = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOthers); };
                             Server.OnPacketSentToAllPlayers = (packet) => { return eventManager.OnPacketCallback(null, packet, EventManager.PacketType.SentAll); };

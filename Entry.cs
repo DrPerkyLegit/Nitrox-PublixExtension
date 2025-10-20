@@ -1,4 +1,4 @@
-﻿using NitroxModel.Logger;
+﻿using Nitrox.Model.Logger;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension

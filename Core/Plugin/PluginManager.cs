@@ -1,6 +1,6 @@
-﻿using Nitrox_PublixExtension.Core.Plugin.Attributes;
-using NitroxModel.Logger;
-using NitroxServer.ConsoleCommands.Abstract;
+﻿using Nitrox.Model.Logger;
+using Nitrox.Server.Subnautica.Models.Commands.Abstract;
+using Nitrox_PublixExtension.Core.Plugin.Attributes;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
