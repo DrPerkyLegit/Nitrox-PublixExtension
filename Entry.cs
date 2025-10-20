@@ -14,7 +14,7 @@ namespace Nitrox_PublixExtension
         {
             foreach (Assembly item in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (item.GetName().Name == "NitroxServer")
+                if (item.GetName().Name == "Nitrox.Server.Subnautica")
                 {
                     ServerAssembly = item;
                     break;

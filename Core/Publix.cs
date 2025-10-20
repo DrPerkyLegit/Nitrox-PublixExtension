@@ -45,14 +45,14 @@ namespace Nitrox_PublixExtension.Core
 
                     RepeatingTask.RunInBackground(async () =>
                     {
-                        NitroxRawServer = ((NitroxServer)Entry.ServerAssembly.GetType("NitroxServer.Server")?.GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
+                        NitroxRawServer = ((NitroxServer)typeof(Server).GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
 
                         if (NitroxRawServer != null)
                         {
 
                             playerManager = new ReflectionWrappers.PlayerManager(NitroxRawServer);
 
-                            Nitrox.Server.Subnautica.Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
+                            Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
                             Server.OnPacketSentToPlayer = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOne); };
                             Server.OnPacketSentToOtherPlayers = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOthers); };
                             Server.OnPacketSentToAllPlayers = (packet) => { return eventManager.OnPacketCallback(null, packet, EventManager.PacketType.SentAll); };
