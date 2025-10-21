@@ -1,4 +1,4 @@
-﻿using Nitrox.Model.Logger;
+﻿using NitroxModel.Logger;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension
@@ -14,7 +14,7 @@ namespace Nitrox_PublixExtension
         {
             foreach (Assembly item in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (item.GetName().Name == "Nitrox.Server.Subnautica")
+                if (item.GetName().Name == "NitroxServer")
                 {
                     ServerAssembly = item;
                     break;

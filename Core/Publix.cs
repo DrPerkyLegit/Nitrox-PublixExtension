@@ -1,11 +1,7 @@
-﻿using Nitrox.Server.Subnautica;
-using Nitrox_PublixExtension.Core.Commands;
+﻿using Nitrox_PublixExtension.Core.Commands;
 using Nitrox_PublixExtension.Core.Events;
 using Nitrox_PublixExtension.Core.Plugin;
-using Nitrox.Model.Logger;
-using Nitrox.Model.Serialization;
-using Nitrox.Server.Subnautica;
-using Nitrox.Server.Subnautica.Models.Communication;
+using NitroxModel.Serialization;
 using System.Reflection;
 
 namespace Nitrox_PublixExtension.Core
@@ -19,8 +15,8 @@ namespace Nitrox_PublixExtension.Core
 
         protected static ReflectionWrappers.PlayerManager playerManager = null;
 
-        public static Server NitroxServerInstance;
-        public static NitroxServer NitroxRawServer;
+        public static NitroxServer.Server NitroxServerInstance;
+        public static NitroxServer.Communication.NitroxServer NitroxRawServer;
 
         protected static FieldInfo serverConfigField;
 
@@ -32,30 +28,30 @@ namespace Nitrox_PublixExtension.Core
             playerCommandProcessor = new PlayerCommandProcessor(pluginManager.GetAllCommands().Append(new HelpCommandOverwrite()));
 
             //TODO: revamp this
-            Server.OnSystemMessage = (msg) => 
+            NitroxServer.Server.OnSystemMessage = (msg) => 
             {
                 if (msg == null)
                     return;
 
                 if (msg[0] == '1') //server started
                 {
-                    NitroxServerInstance = ((Server)typeof(Server).GetProperty("Instance").GetGetMethod().Invoke(null, null));
+                    NitroxServerInstance = ((NitroxServer.Server)typeof(NitroxServer.Server).GetProperty("Instance").GetGetMethod().Invoke(null, null));
 
                     serverConfigField = NitroxServerInstance.GetType().GetField("serverConfig", BindingFlags.Instance | BindingFlags.NonPublic);
 
                     RepeatingTask.RunInBackground(async () =>
                     {
-                        NitroxRawServer = ((NitroxServer)typeof(Server).GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
+                        NitroxRawServer = ((NitroxServer.Communication.NitroxServer)typeof(NitroxServer.Server).GetField("server", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(NitroxServerInstance));
 
                         if (NitroxRawServer != null)
                         {
 
                             playerManager = new ReflectionWrappers.PlayerManager(NitroxRawServer);
 
-                            Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
-                            Server.OnPacketSentToPlayer = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOne); };
-                            Server.OnPacketSentToOtherPlayers = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOthers); };
-                            Server.OnPacketSentToAllPlayers = (packet) => { return eventManager.OnPacketCallback(null, packet, EventManager.PacketType.SentAll); };
+                            NitroxServer.Server.OnPacketRecieved = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.Recieved); };
+                            NitroxServer.Server.OnPacketSentToPlayer = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOne); };
+                            NitroxServer.Server.OnPacketSentToOtherPlayers = (connection, packet) => { return eventManager.OnPacketCallback(connection, packet, EventManager.PacketType.SentOthers); };
+                            NitroxServer.Server.OnPacketSentToAllPlayers = (packet) => { return eventManager.OnPacketCallback(null, packet, EventManager.PacketType.SentAll); };
                             
                             pluginManager.OnServerStarted();
                             return false;

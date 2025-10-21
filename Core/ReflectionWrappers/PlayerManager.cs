@@ -1,7 +1,7 @@
-﻿using Nitrox.Server.Subnautica.Models.GameLogic;
-using Nitrox.Server.Subnautica.Models.Communication;
+﻿using NitroxServer;
+using NitroxServer.Communication;
+using NitroxServer.GameLogic;
 using System.Reflection;
-using Nitrox.Server.Subnautica;
 
 namespace Nitrox_PublixExtension.Core.ReflectionWrappers
 {
@@ -9,10 +9,10 @@ namespace Nitrox_PublixExtension.Core.ReflectionWrappers
     {
         //MethodInfo getPlayerMethod = null;
 
-        public Nitrox.Server.Subnautica.Models.GameLogic.PlayerManager internalPlayerManager;
-        public PlayerManager(NitroxServer NitroxRawServer) 
+        public NitroxServer.GameLogic.PlayerManager internalPlayerManager;
+        public PlayerManager(NitroxServer.Communication.NitroxServer NitroxRawServer) 
         {
-            internalPlayerManager = ((Nitrox.Server.Subnautica.Models.GameLogic.PlayerManager)NitroxRawServer.GetType().GetField("playerManager", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(NitroxRawServer));
+            internalPlayerManager = ((NitroxServer.GameLogic.PlayerManager)NitroxRawServer.GetType().GetField("playerManager", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(NitroxRawServer));
             
         }
 
